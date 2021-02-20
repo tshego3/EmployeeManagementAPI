@@ -12,5 +12,6 @@ namespace EmployeeManagementAPI.Models
         public string tbSurname { get; set; }
         public int tbTellNo { get; set; }
         public string tbEmail { get; set; }
+        public int UserID { get; set; }
     }
 }
