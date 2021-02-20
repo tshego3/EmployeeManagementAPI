@@ -10,7 +10,7 @@ namespace EmployeeManagementAPI.Models
         public int employeeID { get; set; }
         public string tbFirstName { get; set; }
         public string tbSurname { get; set; }
-        public int tbTellNo { get; set; }
+        public string tbTellNo { get; set; }
         public string tbEmail { get; set; }
         public int UserID { get; set; }
     }

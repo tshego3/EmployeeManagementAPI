@@ -8,6 +8,8 @@ namespace EmployeeManagementAPI.Data
 {
     public class EmployeeContext : DbContext
     {
+        //***Update
+
         // You can add custom code to this file. Changes will not be overwritten.
         // 
         // If you want Entity Framework to drop and regenerate your database
