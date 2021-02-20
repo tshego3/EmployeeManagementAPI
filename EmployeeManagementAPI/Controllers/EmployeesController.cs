@@ -10,9 +10,11 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using EmployeeManagementAPI.Data;
 using EmployeeManagementAPI.Models;
+using Microsoft.AspNet.Identity;
 
 namespace EmployeeManagementAPI.Controllers
 {
+    [Authorize] //Method 1 - Authorize required on all the methods.
     public class EmployeesController : ApiController
     {
         private EmployeeContext db = new EmployeeContext();
@@ -20,9 +22,19 @@ namespace EmployeeManagementAPI.Controllers
         //***Update.
 
         // GET: api/Employees
+        //[Authorize] //Method 2 - Authorize individual methods.
         public IQueryable<Employee> GetEmployees()
         {
             return db.Employees;
+        }
+
+        // GET: api/Employees/ForCurrentUser
+        //***Display only the records created by current logged in user.
+        [Route("api/Employees/ForCurrentUser")]
+        public IQueryable<Employee> GetEmployeesForCurrentUser()
+        {
+            string userId = User.Identity.GetUserId();
+            return db.Employees.Where(user => user.UserID == userId);
         }
 
         // GET: api/Employees/5
@@ -50,6 +62,13 @@ namespace EmployeeManagementAPI.Controllers
             if (id != employee.employeeID)
             {
                 return BadRequest();
+            }
+
+            //***Prevent records from being deleted by other users, which are not the record owner/creator.
+            string userId = User.Identity.GetUserId();
+            if (userId != employee.UserID)
+            {
+                return StatusCode(HttpStatusCode.Conflict);
             }
 
             db.Entry(employee).State = EntityState.Modified;
@@ -82,6 +101,10 @@ namespace EmployeeManagementAPI.Controllers
                 return BadRequest(ModelState);
             }
 
+            //***Pass the current logged in user's "userID" to the created record.
+            string userId = User.Identity.GetUserId();
+            employee.UserID = userId;
+
             db.Employees.Add(employee);
             db.SaveChanges();
 
@@ -96,6 +119,13 @@ namespace EmployeeManagementAPI.Controllers
             if (employee == null)
             {
                 return NotFound();
+            }
+
+            //***Prevent records from being deleted by other users, which are not the record owner/creator.
+            string userId = User.Identity.GetUserId();
+            if (userId != employee.UserID)
+            {
+                return StatusCode(HttpStatusCode.Conflict);
             }
 
             db.Employees.Remove(employee);
