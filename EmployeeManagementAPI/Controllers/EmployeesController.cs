@@ -37,6 +37,15 @@ namespace EmployeeManagementAPI.Controllers
             return db.Employees.Where(user => user.UserID == userId);
         }
 
+        // GET: api/Employees/Search/Peter
+        //***Display only the records containing the "keyword".
+        [Route("api/Employees/Search/{keyword}")]
+        [HttpGet]
+        public IQueryable<Employee> SearchEmployees(string keyword)
+        {
+            return db.Employees.Where(employee => employee.tbFirstName.Contains(keyword) || employee.tbSurname.Contains(keyword));
+        }
+
         // GET: api/Employees/5
         [ResponseType(typeof(Employee))]
         public IHttpActionResult GetEmployee(int id)
